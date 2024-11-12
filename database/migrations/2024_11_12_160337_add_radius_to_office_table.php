@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shifts', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->time('start_time');
-            $table->time('end_time');
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::table('offices', function (Blueprint $table) {
+            $table->integer('radius');
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('shifts');
+        Schema::table('offices', function (Blueprint $table) {
+            //
+        });
     }
 };
