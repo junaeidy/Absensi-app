@@ -19,11 +19,17 @@ class ScheduleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
+    protected static ?int $navigationSort = 4;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
+                Forms\Components\Group::make()
+                ->schema([
+                    Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
                     ->searchable()
                     ->required(),
@@ -33,6 +39,8 @@ class ScheduleResource extends Resource
                 Forms\Components\Select::make('office_id')
                     ->relationship('office', 'name')
                     ->required(),
+                    ])
+                ])
             ]);
     }
 

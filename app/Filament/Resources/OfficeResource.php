@@ -7,6 +7,7 @@ use App\Filament\Resources\OfficeResource\RelationManagers;
 use App\Models\Office;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\FormsComponent;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -20,44 +21,61 @@ class OfficeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                OSMMap::make('location')
-                    ->label('Location')
-                    ->showMarker()
-                    ->draggable()
-                    ->extraControl([
-                        'zoomDelta'           => 1,
-                        'zoomSnap'            => 0.25,
-                        'wheelPxPerZoomLevel' => 60
-                    ])
-                    ->afterStateHydrated(function (Forms\Get $get, Forms\Set $set, $record){
-                        $latitude = $record->latitude;
-                        $longitude = $record->longitude;
+                Forms\Components\Group::make()
+                    ->schema([
+                        Forms\Components\Section::make()
+                        ->schema([
+                            Forms\Components\TextInput::make('name')
+                                ->required()
+                                ->maxLength(255),
+                            OSMMap::make('location')
+                                ->label('Location')
+                                ->showMarker()
+                                ->draggable()
+                                ->extraControl([
+                                    'zoomDelta'           => 1,
+                                    'zoomSnap'            => 0.25,
+                                    'wheelPxPerZoomLevel' => 60
+                                ])
+                                ->afterStateHydrated(function (Forms\Get $get, Forms\Set $set, $record){
+                                    $latitude = $record->latitude;
+                                    $longitude = $record->longitude;
 
-                        if($latitude && $longitude) {
-                            $set('location', ['lat' => $latitude, 'lng' => $longitude]);
-                        }
-                    })
-                    ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
-                        $set('latitude', $state['lat']);
-                        $set('longitude', $state['lng']);
-                    })
-                    ->tilesUrl('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
-                Forms\Components\TextInput::make('latitude')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('longitude')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('radius')
-                    ->required()
-                    ->numeric(),
+                                    if($latitude && $longitude) {
+                                        $set('location', ['lat' => $latitude, 'lng' => $longitude]);
+                                    }
+                                })
+                                ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
+                                    $set('latitude', $state['lat']);
+                                    $set('longitude', $state['lng']);
+                                })
+                                ->tilesUrl('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
+                        Forms\Components\Group::make()
+                        ->schema([
+                            Forms\Components\TextInput::make('latitude')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\TextInput::make('longitude')
+                            ->required()
+                            ->numeric(),
+                            ])->columns(2)
+                        ])
+                    ]),
+                Forms\Components\Group::make()
+                ->schema([
+                    Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('radius')
+                                ->required()
+                                ->numeric(),
+                    ])
+                ])
             ]);
     }
 
