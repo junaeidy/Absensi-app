@@ -12,12 +12,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Humaidem\FilamentMapPicker\Fields\OSMMap;
 
 class OfficeResource extends Resource
 {
     protected static ?string $model = Office::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
     public static function form(Form $form): Form
     {
@@ -26,6 +27,28 @@ class OfficeResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                OSMMap::make('location')
+                    ->label('Location')
+                    ->showMarker()
+                    ->draggable()
+                    ->extraControl([
+                        'zoomDelta'           => 1,
+                        'zoomSnap'            => 0.25,
+                        'wheelPxPerZoomLevel' => 60
+                    ])
+                    ->afterStateHydrated(function (Forms\Get $get, Forms\Set $set, $record){
+                        $latitude = $record->latitude;
+                        $longitude = $record->longitude;
+
+                        if($latitude && $longitude) {
+                            $set('location', ['lat' => $latitude, 'lng' => $longitude]);
+                        }
+                    })
+                    ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
+                        $set('latitude', $state['lat']);
+                        $set('longitude', $state['lng']);
+                    })
+                    ->tilesUrl('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
                 Forms\Components\TextInput::make('latitude')
                     ->required()
                     ->numeric(),
