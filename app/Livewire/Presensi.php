@@ -3,11 +3,16 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\Schedule;
+use Illuminate\Support\Facades\Auth;
 
 class Presensi extends Component
 {
     public function render()
     {
-        return view('livewire.presensi');
+        $schedule = Schedule::where('user_id', Auth::user()->id)->first();
+        return view('livewire.presensi', [
+            'schedule' => $schedule
+        ]);
     }
 }
