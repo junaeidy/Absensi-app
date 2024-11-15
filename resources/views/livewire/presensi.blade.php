@@ -8,6 +8,11 @@
                         <p><strong>Nama Pegawai: </strong>{{Auth::user()->name}}</p>
                         <p><strong>Kantor :</strong> {{$schedule->office->name}}</p>
                         <p><strong>Shift :</strong> {{$schedule->shift->name}} ({{$schedule->shift->start_time}} - {{$schedule->shift->end_time}})</p>
+                        @if ($schedule->is_wfa)
+                            <p class="text-green-500"><strong>WFA :</strong> Ya</p>
+                        @else
+                            <p class="text-red-500"><strong>WFA :</strong> Tidak</p>
+                        @endif
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                         <div class="bg-gray-100 p-4 rounded-lg">
@@ -74,8 +79,6 @@
                         component.set('insideRadius', true);
                         component.set('latitude', lat);
                         component.set('longitude', lng);
-                    }else{
-                        alert('Anda diluar radius');
                     }
                 })
             } else{
@@ -84,8 +87,13 @@
         }
 
         function isWithinRadius(lat, lng, center, radius){
-            let distance = map.distance([lat, lng], center);
-            return distance <= radius;
+            const is_wfa = {{$schedule->is_wfa}};
+            if(is_wfa){
+                return true;
+            }else{
+                let distance = map.distance([lat, lng], center);
+                return distance <= radius;
+            }
         }
     </script>
 </div>
