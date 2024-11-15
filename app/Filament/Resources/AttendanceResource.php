@@ -69,9 +69,11 @@ class AttendanceResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama Pegawai')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
+                    ->searchable()
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('is_late')
@@ -81,12 +83,18 @@ class AttendanceResource extends Resource
                         return $record->isLate() ? 'Terlambat' : 'Tepat Waktu';
                     })
                     ->color(fn ($record) => $record->isLate() ? 'danger' : 'success'),
+                
                 Tables\Columns\TextColumn::make('start_time')
                     ->label('Waktu Datang')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_time')
                     ->label('Waktu Pulang')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('work_duration')
+                    ->label('Durasi Kerja')
+                    ->getStateUsing(function ($record) {
+                        return $record->workDuration();
+                    }),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
