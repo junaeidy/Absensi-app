@@ -74,6 +74,13 @@ class AttendanceResource extends Resource
                     ->label('Tanggal')
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('is_late')
+                    ->label('Status')
+                    ->badge()
+                    ->getStateUsing(function ($record) {
+                        return $record->isLate() ? 'Terlambat' : 'Tepat Waktu';
+                    })
+                    ->color(fn ($record) => $record->isLate() ? 'danger' : 'success'),
                 Tables\Columns\TextColumn::make('start_time')
                     ->label('Waktu Datang')
                     ->sortable(),
@@ -81,6 +88,7 @@ class AttendanceResource extends Resource
                     ->label('Waktu Pulang')
                     ->sortable(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])

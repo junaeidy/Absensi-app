@@ -58,11 +58,12 @@ class Presensi extends Component
                     'end_time' => Carbon::now()->toTimeString(),
                 ]);
             }
+            return redirect('admin/attendances');
 
-            return redirect()->route('presensi',[
-                'schedule' => $schedule,
-                'insideRadius' => false,
-            ]);
+            // return redirect()->route('presensi',[
+            //     'schedule' => $schedule,
+            //     'insideRadius' => false,
+            // ]);
         }
     }
 }
