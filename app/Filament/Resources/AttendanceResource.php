@@ -24,9 +24,9 @@ class AttendanceResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
-                    ->required()
-                    ->readonly(),
+                Forms\Components\Select::make('user')
+                    ->relationship('user', 'name')
+                    ->disabled(),
                 Forms\Components\TextInput::make('schedule_latitude')
                     ->required()
                     ->numeric(),
