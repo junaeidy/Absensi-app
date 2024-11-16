@@ -28,6 +28,12 @@
                 <div>
                 <h2 class="text-2xl font-bold mb-2">Presensi</h2>
                 <div id="map" class="mb-4 rounded-lg border border-gray-300" wire:ignore></div>
+                @if (session()->has('error'))
+                    <div style="color: red;" class="alert alert-danger">
+                        {{ session('error') }}  
+                    </div>
+                    
+                @endif
                 <form class="row g-3" wire:submit="store" enctype="multipart/form-data">
                     <button type="button" onclick="tagLocation()" class="px-4 py-2 bg-blue-500 text-white rounded">Tag Location</button>
                     @if ($insideRadius)
@@ -62,20 +68,20 @@
             }).addTo(map);
         })
         
-        function tagLocation(){
-            if(navigator.geolocation){
-                navigator.geolocation.getCurrentPosition((position)=>{
+        function tagLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
                     lat = position.coords.latitude;
                     lng = position.coords.longitude;
-
-                    if(marker){
+                    
+                    if (marker) {
                         map.removeLayer(marker);
                     }
 
                     marker = L.marker([lat, lng]).addTo(map);
-                    map.setView([lat, lng], 13);
+                    map.setView([lat, lng], 15);
 
-                    if(isWithinRadius(lat, lng, office, radius)){
+                    if (isWithinRadius(lat, lng, office, radius)) {
                         component.set('insideRadius', true);
                         component.set('latitude', lat);
                         component.set('longitude', lng);
@@ -87,10 +93,10 @@
         }
 
         function isWithinRadius(lat, lng, center, radius){
-            const is_wfa = {{$schedule->is_wfa}};
+            const is_wfa = {{$schedule->is_wfa}}
             if(is_wfa){
                 return true;
-            }else{
+            } else {
                 let distance = map.distance([lat, lng], center);
                 return distance <= radius;
             }
