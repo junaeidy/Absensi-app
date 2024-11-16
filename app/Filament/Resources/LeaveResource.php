@@ -22,22 +22,31 @@ class LeaveResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make()
-                    ->schema([
-                        Forms\Components\DatePicker::make('start_date')
-                    ->required(),
-                    Forms\Components\DatePicker::make('end_date')
+        $schema = [
+            Forms\Components\Section::make()
+                ->schema([
+                    Forms\Components\TextInput::make('start_date')
                         ->required(),
-                    Forms\Components\Textarea::make('reason')
-                        ->required()
-                        ->columnSpanFull(),
+                    Forms\Components\TextInput::make('end_date')
+                        ->required(),
+                    Forms\Components\TextInput::make('reason')
+                        ->columnSpanFull()
+                        ->required(),
                 ]),
-                Forms\Components\Section::make()
-                    ->schema([
-                ])
-            ]);
+        ];
+        if (Auth::user()->hasRole('super_admin')) {
+            $schema[] = Forms\Components\Section::make('Approval')
+                ->schema([
+                    Forms\Components\Select::make('status')
+                        ->options([
+                            'approved' => 'Approved',
+                            'rejected' => 'Rejected',
+                        ]),
+                    Forms\Components\TextInput::make('note')
+                        ->columnSpanFull(),
+                    ]);
+        }
+        return $form->schema($schema);
     }
 
     public static function table(Table $table): Table
@@ -60,7 +69,15 @@ class LeaveResource extends Resource
                 Tables\Columns\TextColumn::make('end_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state) => match ($state) {
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        default => 'secondary',
+                    })
+                    ->description(fn (Leave $record): string => $record->note ? $record->note : ''),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
