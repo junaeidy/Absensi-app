@@ -10,11 +10,17 @@ class Schedule extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'is_banned' => 'boolean',
+        'is_wfa' => 'boolean',
+    ];
+
     protected $fillable = [
         "user_id",
         "shift_id",
         "office_id",
         "is_wfa",
+        "is_banned",
     ];
     /**
      * Get the user that owns the Schedule

@@ -30,6 +30,7 @@ class ScheduleResource extends Resource
                 ->schema([
                     Forms\Components\Section::make()
                     ->schema([
+                        Forms\Components\Toggle::make('is_banned'),
                         Forms\Components\Select::make('user_id')
                             ->relationship('user', 'name')
                             ->searchable()
@@ -66,6 +67,9 @@ class ScheduleResource extends Resource
                 Tables\Columns\TextColumn::make('user.email')
                     ->label('Email')
                     ->sortable(),
+                Tables\Columns\ToggleColumn::make('is_banned')
+                    ->hidden(fn () => !Auth::user()->hasRole('super_admin'))
+                    ->label('Banned'),
                 Tables\Columns\BooleanColumn::make('is_wfa')
                     ->label('WFA'),
                 Tables\Columns\TextColumn::make('shift.name')
