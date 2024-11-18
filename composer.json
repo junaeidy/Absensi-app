@@ -5,14 +5,16 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "bezhansalleh/filament-shield": "^3.3",
         "filament/filament": "^3.2",
         "humaidem/filament-map-picker": "^0.1.5",
         "laravel/framework": "^11.9",
         "laravel/pulse": "^1.2",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "maatwebsite/excel": "^1.1",
+        "phpoffice/phpspreadsheet": "^3.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
