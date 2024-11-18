@@ -5,10 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Models\Leave;
 use App\Models\Schedule;
 use App\Models\Attendance;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
 class AttendanceController extends Controller
@@ -51,6 +51,14 @@ class AttendanceController extends Controller
         $schedule = Schedule::with(['office', 'shift'])
                         ->where('user_id', auth()->user()->id)
                         ->first();
+
+        if ($schedule == null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda belum mendapatkan jadwal, Silahkan hubungi admin untuk membuat jadwal.',
+                'data' => null
+            ]);
+        
         $today = Carbon::today()->format('Y-m-d');
         $approvedLeave = Leave::where('user_id', Auth::user()->id)
                             ->where('status', 'approved')
@@ -83,7 +91,7 @@ class AttendanceController extends Controller
     }
 
     public function store(Request $request)
-    {
+    {   
         $validator = Validator::make($request->all(), [
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric'
@@ -98,6 +106,13 @@ class AttendanceController extends Controller
         }
 
         $schedule = Schedule::where('user_id', Auth::user()->id)->first();
+
+        if ($schedule == null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda belum mendapatkan jadwal, Silahkan hubungi admin untuk membuat jadwal.',
+                'data' => null
+            ]);
 
         $today = Carbon::today()->format('Y-m-d');
         $approvedLeave = Leave::where('user_id', Auth::user()->id)

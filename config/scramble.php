@@ -29,7 +29,7 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => '',
+        'description' => 'API untuk sistem Absensi-app',
     ],
 
     /*
@@ -80,6 +80,7 @@ return [
 
     'middleware' => [
         'web',
+        'api-doc-access',
         RestrictedDocsAccess::class,
     ],
 
