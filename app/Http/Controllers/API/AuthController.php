@@ -12,7 +12,18 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
+            /**
+             * Email
+             * 
+             * @example admin@admin.com
+             */
             'email' => 'required|string|email',
+
+            /**
+             * Password
+             * 
+             * @example password
+             */
             'password' => 'required'
         ]);
 
